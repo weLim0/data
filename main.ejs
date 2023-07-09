@@ -357,7 +357,7 @@
     <script>
         function login() {
             var password = document.getElementById("password").value;
-            location.href = "http://localhost:3001/login?pw=" + password;
+            location.href = "http://34.22.72.47:3001/login?pw=" + password;
         }
 
     </script>
@@ -480,7 +480,7 @@
                 return formattedNumber;
             }
             async function jsontoxlsx(data,id) {
-                await axios.post(`http://localhost:3001/makeExcel`,{
+                await axios.post(`http://34.22.72.47:3001/makeExcel`,{
                     id:id,
                     data:data
                 })
@@ -518,7 +518,7 @@
                 const formData = new FormData();
                 formData.append('xlsx', input.files[0]);
                 // 서버 업로드 URL
-                const url = 'http://localhost:3001/uploadExcel'; // 실제 서버 URL로 변경해야 합니다.
+                const url = 'http://34.22.72.47:3001/uploadExcel'; // 실제 서버 URL로 변경해야 합니다.
                 // XMLHttpRequest를 사용하여 파일 업로드 요청
                 const xhr = new XMLHttpRequest();
                 xhr.open('POST', url, true);
@@ -530,7 +530,7 @@
                             let data = JSON.parse(xhr.responseText)
                             let i = 0;
                             data.forEach(async (e) => {
-                                let response = await axios.get(`http://localhost:3001/getCompany?company=${e.업체명}&ceo=${e.업체대표}&phone=${e.휴대폰}`)
+                                let response = await axios.get(http://34.22.72.47:3001/getCompany?company=${e.업체명}&ceo=${e.업체대표}&phone=${e.휴대폰}`)
                                 if(response.data != false && response.data != "false") {
                                     excelResult.push(response.data)
                                 }
@@ -652,7 +652,7 @@ function numberToKorean(number) {
                 const formData = new FormData();
                 formData.append('xlsx', input.files[0]);
                 // 서버 업로드 URL
-                const url = 'http://localhost:3001/uploadExcel'; // 실제 서버 URL로 변경해야 합니다.
+                const url = 'http://34.22.72.47:3001/uploadExcel'; // 실제 서버 URL로 변경해야 합니다.
                 // XMLHttpRequest를 사용하여 파일 업로드 요청
                 const xhr = new XMLHttpRequest();
                 xhr.open('POST', url, true);
@@ -682,7 +682,7 @@ function numberToKorean(number) {
                                 e.이익잉여금 = test.includes("주식회사") || test.includes("(주)") || test.includes("( 주 )") ? e.이익잉여금 : 0
                                 e.사업연도 = ""
                                 e.장기차입금_매출액 = (e.장기차입금 / e.매출액).toFixed(2) * 100
-                                let response = await axios.post(`http://localhost:3001/makePdf`, {id:fileId,data:e})
+                                let response = await axios.post(`http://34.22.72.47:3001/makePdf`, {id:fileId,data:e})
                                 i++;
                                 result2.innerHTML = "정리 데이터 : "+i+"/"+JSON.parse(xhr.responseText).length+"개"
                                 if (i === JSON.parse(xhr.responseText).length) {
@@ -707,7 +707,7 @@ function numberToKorean(number) {
                 startButton.disabled = true;
                 const searchbarInput = document.querySelector('input[name="searchbar"]');
                 startButton.textContent = '검색중';
-                let response = await axios.get(`http://localhost:3001/getCompany?company=${searchbarInput.value}&ceo=&phone=`)
+                let response = await axios.get(`http://34.22.72.47:3001/getCompany?company=${searchbarInput.value}&ceo=&phone=`)
                 let data = response.data
                 if(response.data == false || response.data == "false") {
                     searchbarInput.value = "검색 실패.."
@@ -734,7 +734,7 @@ function numberToKorean(number) {
                                 e.사업연도 = ""
                                 e.장기차입금_매출액 = (e.장기차입금 / e.매출액).toFixed(2) * 100
                 startButton.textContent = '제작중';
-                                let response = await axios.post(`http://localhost:3001/makePdf`, {id:is,data:e})
+                                let response = await axios.post(`http://34.22.72.47:3001/makePdf`, {id:is,data:e})
                 startButton.textContent = '제작완료!';
                 downloadPdf(is,e.기업명+"_"+e.대표자)
                     startButton.disabled = false;
