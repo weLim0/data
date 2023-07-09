@@ -1,0 +1,793 @@
+<% if(!user){ %>
+    <!DOCTYPE html>
+    <html lang="en" >
+    <head>
+        <meta charset="UTF-8">
+        <title>DB 분석기 - 로그인</title>
+
+    </head>
+
+    <body>
+    <!-- partial:index.partial.html -->
+    <hgroup>
+        <h1>DB 분석기</h1>
+    </hgroup>
+    <style>
+        * { box-sizing:border-box; }
+
+        body {
+            font-family: Helvetica;
+            background: #eee;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        hgroup {
+            text-align:center;
+            margin-top: 4em;
+        }
+
+        h1, h3 { font-weight: 300; }
+
+        h1 { color: #636363; }
+
+        h3 { color: #4a89dc; }
+
+        form {
+            width: 380px;
+            margin: 4em auto;
+            padding: 3em 2em 2em 2em;
+            background: #fafafa;
+            border: 1px solid #ebebeb;
+            box-shadow: rgba(0,0,0,0.14902) 0px 1px 1px 0px,rgba(0,0,0,0.09804) 0px 1px 2px 0px;
+        }
+
+        .group {
+            position: relative;
+            margin-bottom: 45px;
+        }
+
+        input {
+            font-size: 18px;
+            padding: 10px 10px 10px 5px;
+            -webkit-appearance: none;
+            display: block;
+            background: #fafafa;
+            color: #636363;
+            width: 100%;
+            border: none;
+            border-radius: 0;
+            border-bottom: 1px solid #757575;
+        }
+
+        input:focus { outline: none; }
+
+
+        /* Label */
+
+        label {
+            color: #999;
+            font-size: 18px;
+            font-weight: normal;
+            position: absolute;
+            pointer-events: none;
+            left: 5px;
+            top: 10px;
+            transition: all 0.2s ease;
+        }
+
+
+        /* active */
+
+        input:focus ~ label, input.used ~ label {
+            top: -20px;
+            transform: scale(.75); left: -2px;
+            /* font-size: 14px; */
+            color: #4a89dc;
+        }
+
+
+        /* Underline */
+
+        .bar {
+            position: relative;
+            display: block;
+            width: 100%;
+        }
+
+        .bar:before, .bar:after {
+            content: '';
+            height: 2px;
+            width: 0;
+            bottom: 1px;
+            position: absolute;
+            background: #4a89dc;
+            transition: all 0.2s ease;
+        }
+
+        .bar:before { left: 50%; }
+
+        .bar:after { right: 50%; }
+
+
+        /* active */
+
+        input:focus ~ .bar:before, input:focus ~ .bar:after { width: 50%; }
+
+
+        /* Highlight */
+
+        .highlight {
+            position: absolute;
+            height: 60%;
+            width: 100px;
+            top: 25%;
+            left: 0;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+
+        /* active */
+
+        input:focus ~ .highlight {
+            -webkit-animation: inputHighlighter 0.3s ease;
+            animation: inputHighlighter 0.3s ease;
+        }
+
+
+        /* Animations */
+
+        @-webkit-keyframes inputHighlighter {
+            from { background: #4a89dc; }
+            to 	{ width: 0; background: transparent; }
+        }
+
+        @keyframes inputHighlighter {
+            from { background: #4a89dc; }
+            to 	{ width: 0; background: transparent; }
+        }
+
+
+        /* Button */
+
+        .button {
+            position: relative;
+            display: inline-block;
+            padding: 12px 24px;
+            margin: .3em 0 1em 0;
+            width: 100%;
+            vertical-align: middle;
+            color: #fff;
+            font-size: 16px;
+            line-height: 20px;
+            -webkit-font-smoothing: antialiased;
+            text-align: center;
+            letter-spacing: 1px;
+            background: transparent;
+            border: 0;
+            border-bottom: 2px solid #3160B6;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .button:focus { outline: 0; }
+
+
+        /* Button modifiers */
+
+        .buttonBlue {
+            background: #4a89dc;
+            text-shadow: 1px 1px 0 rgba(39, 110, 204, .5);
+        }
+
+        .buttonBlue:hover { background: #357bd8; }
+
+
+        /* Ripples container */
+
+        .ripples {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: transparent;
+        }
+
+
+        /* Ripples circle */
+
+        .ripplesCircle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .ripples.is-active .ripplesCircle {
+            -webkit-animation: ripples .4s ease-in;
+            animation: ripples .4s ease-in;
+        }
+
+
+        /* Ripples animation */
+
+        @-webkit-keyframes ripples {
+            0% { opacity: 0; }
+
+            25% { opacity: 1; }
+
+            100% {
+                width: 200%;
+                padding-bottom: 200%;
+                opacity: 0;
+            }
+        }
+
+        @keyframes ripples {
+            0% { opacity: 0; }
+
+            25% { opacity: 1; }
+
+            100% {
+                width: 200%;
+                padding-bottom: 200%;
+                opacity: 0;
+            }
+        }
+
+        footer { text-align: center; }
+
+        footer p {
+            color: #888;
+            font-size: 13px;
+            letter-spacing: .4px;
+        }
+
+        footer a {
+            color: #4a89dc;
+            text-decoration: none;
+            transition: all .2s ease;
+        }
+
+        footer a:hover {
+            color: #666;
+            text-decoration: underline;
+        }
+
+        footer img {
+            width: 80px;
+            transition: all .2s ease;
+        }
+
+        footer img:hover { opacity: .83; }
+
+        footer img:focus , footer a:focus { outline: none; }
+
+        .row {
+            --bs-blue: #0d6efd;
+    --bs-indigo: #6610f2;
+    --bs-purple: #6f42c1;
+    --bs-pink: #d63384;
+    --bs-red: #dc3545;
+    --bs-orange: #fd7e14;
+    --bs-yellow: #ffc107;
+    --bs-green: #198754;
+    --bs-teal: #20c997;
+    --bs-cyan: #0dcaf0;
+    --bs-black: #000;
+    --bs-white: #fff;
+    --bs-gray: #6c757d;
+    --bs-gray-dark: #343a40;
+    --bs-gray-100: #f8f9fa;
+    --bs-gray-200: #e9ecef;
+    --bs-gray-300: #dee2e6;
+    --bs-gray-400: #ced4da;
+    --bs-gray-500: #adb5bd;
+    --bs-gray-600: #6c757d;
+    --bs-gray-700: #495057;
+    --bs-gray-800: #343a40;
+    --bs-gray-900: #212529;
+    --bs-primary: #0d6efd;
+    --bs-secondary: #6c757d;
+    --bs-success: #198754;
+    --bs-info: #0dcaf0;
+    --bs-warning: #ffc107;
+    --bs-danger: #dc3545;
+    --bs-light: #f8f9fa;
+    --bs-dark: #212529;
+    --bs-primary-rgb: 13,110,253;
+    --bs-secondary-rgb: 108,117,125;
+    --bs-success-rgb: 25,135,84;
+    --bs-info-rgb: 13,202,240;
+    --bs-warning-rgb: 255,193,7;
+    --bs-danger-rgb: 220,53,69;
+    --bs-light-rgb: 248,249,250;
+    --bs-dark-rgb: 33,37,41;
+    --bs-white-rgb: 255,255,255;
+    --bs-black-rgb: 0,0,0;
+    --bs-body-color-rgb: 33,37,41;
+    --bs-body-bg-rgb: 255,255,255;
+    --bs-font-sans-serif: system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue","Noto Sans","Liberation Sans",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+    --bs-font-monospace: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+    --bs-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
+    --bs-body-font-family: var(--bs-font-sans-serif);
+    --bs-body-font-size: 1rem;
+    --bs-body-font-weight: 400;
+    --bs-body-line-height: 1.5;
+    --bs-body-color: #212529;
+    --bs-body-bg: #fff;
+    --bs-border-width: 1px;
+    --bs-border-style: solid;
+    --bs-border-color: #dee2e6;
+    --bs-border-color-translucent: rgba(0, 0, 0, 0.175);
+    --bs-border-radius: 0.375rem;
+    --bs-border-radius-sm: 0.25rem;
+    --bs-border-radius-lg: 0.5rem;
+    --bs-border-radius-xl: 1rem;
+    --bs-border-radius-2xl: 2rem;
+    --bs-border-radius-pill: 50rem;
+    --bs-link-color: #0d6efd;
+    --bs-link-hover-color: #0a58ca;
+    --bs-code-color: #d63384;
+    --bs-highlight-bg: #fff3cd;
+    font-family: var(--bs-body-font-family);
+    font-size: var(--bs-body-font-size);
+    font-weight: var(--bs-body-font-weight);
+    line-height: var(--bs-body-line-height);
+    color: var(--bs-body-color);
+    text-align: var(--bs-body-text-align);
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+    box-sizing: border-box;
+    --bs-gutter-x: 1.5rem;
+    --bs-gutter-y: 0;
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: var(--bs-gutter-y);
+    margin-right: var(--bs-gutter-x);
+    margin-left: var(--bs-gutter-x);
+        }
+    </style>
+    <script>
+        function login() {
+            var password = document.getElementById("password").value;
+            location.href = "http://localhost:3001/login?pw=" + password;
+        }
+
+    </script>
+    <form>
+        <div class="group">
+            <input type="email" id="password"><span class="highlight"></span><span class="bar"></span>
+            <label>비밀번호</label>
+        </div>
+        <button type="button" class="button buttonBlue" onclick="login()">로그인
+            <div class="ripples buttonRipples"><span class="ripplesCircle"></span></div>
+        </button>
+    </form>
+    <footer><img src="https://www.polymer-project.org/images/logos/p-logo.svg"></a>
+        <p>Contents Copyrightⓒ 2023 weLim</p>
+    </footer>
+    <!-- partial -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+
+    </body>
+    </html>
+<% } else { %>
+    <!DOCTYPE html>
+    <html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+        <title>DB 분석기</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/css/bootstrap.min.css">
+        <script>
+            function handleFileSelect(event) {
+            }
+        </script>
+        <script>
+            let excelResult = [];
+            let fileId = ""
+            let xlsxId;
+            function numberFormat(x) {
+                return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            }
+            function numberToKorean(number) {
+                let e = '';
+                if (number < 0) {
+                    number = Math.abs(number);
+                    e = '-'
+                }
+                var inputNumber = number < 0 ? false : number;
+                var unitWords = ['', '만', '억', '조', '경'];
+                var splitUnit = 10000;
+                var splitCount = unitWords.length;
+                var resultArray = [];
+                var resultString = '';
+
+                for (var i = 0; i < splitCount; i++) {
+                    let unitResult = (inputNumber % Math.pow(splitUnit, i + 1)) / Math.pow(splitUnit, i);
+                    unitResult = Math.floor(unitResult);
+                    if (unitResult > 0) {
+                        resultArray[i] = unitResult;
+                    }
+                }
+
+                for (var i = 0; i < resultArray.length; i++) {
+                    if (!resultArray[i]) continue;
+                    resultString = String(numberFormat(resultArray[i])) + unitWords[i] + resultString;
+                }
+                if (number === 0) resultString = "0"
+
+                return e + resultString;
+            }
+            function downloadZip() {
+                // 서버에서 파일을 다운로드하는 로직 작성
+                var fileURL = '/zipData/' + fileId + '.zip';
+                var fileName = '보고서.zip';
+
+                var a = document.createElement('a');
+                a.href = fileURL;
+                a.download = fileName;
+                a.style.display = 'none';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
+            function downloadExcel() {
+                // 서버에서 파일을 다운로드하는 로직 작성
+                var fileURL = '/excelData/' + xlsxId + '.xlsx';
+                console.log('/excelData/' + xlsxId + '.xlsx')
+                var fileName = "디비가공.xlsx";
+
+                var a = document.createElement('a');
+                a.href = fileURL;
+                a.download = fileName;
+                a.style.display = 'none';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
+            function downloadPdf(id,name) {
+                // 서버에서 파일을 다운로드하는 로직 작성
+                var fileURL = '/pdfData/' + id + '/'+name+'.pdf';
+                var fileName = name+".pdf";
+
+                var a = document.createElement('a');
+                a.href = fileURL;
+                a.download = fileName;
+                a.style.display = 'none';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
+            function addCommasToNumber(number) {
+                // 숫자를 문자열로 변환하고, 천 단위마다 쉼표를 추가합니다.
+                const strNumber = String(number);
+                const parts = strNumber.split('.');
+                parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+                // 소수점 아래가 있으면 합쳐줍니다.
+                const formattedNumber = parts.join('.');
+                return formattedNumber;
+            }
+            async function jsontoxlsx(data,id) {
+                await axios.post(`http://localhost:3001/makeExcel`,{
+                    id:id,
+                    data:data
+                })
+                return true
+            }
+            function uuidv4() {
+                return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                    var r = Math.random() * 16 | 0,
+                        v = c == 'x' ? r : (r & 0x3 | 0x8);
+                    return v.toString(16);
+                });
+            }
+            function uploadExcel() {
+                const startButton = document.getElementById("startButton");
+                const downButton = document.getElementById("downButton");
+                startButton.disabled = true;
+                downButton.disabled = true;
+                const input = document.getElementById('excelFile');
+                if (input.files.length  > 1) {
+                    alert('파일은 최대 1개까지 선택할 수 있습니다.');
+                    input.value = ''; // 파일 선택 input 초기화
+                    startButton.disabled = false;
+                    return;
+                }
+                if (input.files.length == 0) {
+                    alert('파일을 선택해주세요.');
+                    input.value = ''; // 파일 선택 input 초기화
+                    startButton.disabled = false;
+                    return;
+                }
+                const result1 = document.getElementById('result1');
+                result1.innerHTML = input.files[0].name+" 파일을 분석 중입니다...";
+                const result2 = document.getElementById('result2');
+                result2.innerHTML = "";
+                const formData = new FormData();
+                formData.append('xlsx', input.files[0]);
+                // 서버 업로드 URL
+                const url = 'http://localhost:3001/uploadExcel'; // 실제 서버 URL로 변경해야 합니다.
+                // XMLHttpRequest를 사용하여 파일 업로드 요청
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', url, true);
+                xhr.onreadystatechange = async function() {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status === 200) {
+                            result1.innerHTML = input.files[0].name+" 분석완료.<br/>데이터 개수 : "+JSON.parse(xhr.responseText).length+"개, 가공을 시작합니다.";
+                            result2.innerHTML = "가공 데이터 : "+"0/"+JSON.parse(xhr.responseText).length+"개"
+                            let data = JSON.parse(xhr.responseText)
+                            let i = 0;
+                            data.forEach(async (e) => {
+                                let response = await axios.get(`http://localhost:3001/getCompany?company=${e.업체명}&ceo=${e.업체대표}&phone=${e.휴대폰}`)
+                                if(response.data != false && response.data != "false") {
+                                    excelResult.push(response.data)
+                                }
+                                i++;
+                                result2.innerHTML = "가공 데이터 : "+i+"/"+JSON.parse(xhr.responseText).length+"개"
+                                if (i === JSON.parse(xhr.responseText).length) {
+                                    xlsxId = uuidv4()
+                                    await jsontoxlsx(excelResult,xlsxId)
+                                    result2.innerHTML = "가공 데이터 : "+i+"/"+JSON.parse(xhr.responseText).length+"개</br>작업완료!"
+                                    startButton.disabled = false;
+                                    downButton.disabled = false;
+                                }
+                            });
+                        } else {
+                            // 업로드 실패 시 동작할 코드
+                            console.log('파일 업로드 실패');
+                        }
+                    }
+                };
+                xhr.send(formData);
+            }
+            function 과세표준계산(값, 법인) {
+    if (법인 == true) {
+        if (값 <= 200000000) {
+            return 값*0.09
+        }
+        if (값 > 200000000 && 값 <= 20000000000) {
+            return 값*0.119
+        }
+        if (값 > 20000000000 && 값 <= 300000000000) {
+            return 값*0.21
+        }
+        if (값 > 300000000000) {
+            return 값*0.24
+        }
+    } else {
+        if (값 <= 14000000) {
+            return 값*0.06
+        }
+        if (값 > 14000000 && 값 <= 50000000) {
+            return (14000000*0.06) + (값-14000000)*0.15 - 1260000
+        }
+        if (값 > 50000000 && 값 <= 88000000) {
+            return (50000000*0.15) + (값-50000000)*0.24 - 5760000
+        }
+        if (값 > 88000000 && 값 <= 150000000) {
+            return (88000000*0.24) + (값-88000000)*0.35 - 15440000
+        }
+        if (값 > 150000000 && 값 <= 300000000) {
+            return (150000000*0.35) + (값-150000000)*0.38 - 19940000
+        }
+        if (값 > 300000000 && 값 <= 500000000) {
+            return (300000000*0.38) + (값-300000000)*0.40 - 25940000
+        }
+        if (값 > 500000000 && 값 <= 1000000000) {
+            return (500000000*0.40) + (값-500000000)*0.42 - 49940000
+        }
+        if (값 > 1000000000) {
+            return (1000000000*0.42) + (값-1000000000)*0.45 - 65940000
+        }
+    }
+  }
+
+function numberFormat(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+function numberToKorean(number) {
+    let e = '';
+    if (number < 0) {
+        number = Math.abs(number);
+        e = '-'
+    }
+    var inputNumber = number < 0 ? false : number;
+    var unitWords = ['', '만', '억', '조', '경'];
+    var splitUnit = 10000;
+    var splitCount = unitWords.length;
+    var resultArray = [];
+    var resultString = '';
+
+    for (var i = 0; i < splitCount; i++) {
+        let unitResult = (inputNumber % Math.pow(splitUnit, i + 1)) / Math.pow(splitUnit, i);
+        unitResult = Math.floor(unitResult);
+        if (unitResult > 0) {
+            resultArray[i] = unitResult;
+        }
+    }
+
+    for (var i = 0; i < resultArray.length; i++) {
+        if (!resultArray[i]) continue;
+        resultString = String(numberFormat(resultArray[i])) + unitWords[i] + resultString;
+    }
+    if (number === 0) resultString = "0"
+
+    return e + resultString;
+}
+            function uploadExcelData() {
+                const startButton = document.getElementById("startButton2");
+                const downButton = document.getElementById("downButton2");
+                startButton.disabled = true;
+                downButton.disabled = true;
+                const input = document.getElementById('excelFile2');
+                if (input.files.length > 1) {
+                    alert('파일은 최대 1개까지 선택할 수 있습니다.');
+                    input.value = ''; // 파일 선택 input 초기화
+                    startButton.disabled = false;
+                    return;
+                }
+                if (input.files.length == 0) {
+                    alert('파일을 선택해주세요.');
+                    input.value = ''; // 파일 선택 input 초기화
+                    startButton.disabled = false;
+                    return;
+                }
+                const result1 = document.getElementById('result3');
+                result1.innerHTML = input.files[0].name+" 파일을 분석 중입니다...";
+                const result2 = document.getElementById('result4');
+                result2.innerHTML = "";
+                const formData = new FormData();
+                formData.append('xlsx', input.files[0]);
+                // 서버 업로드 URL
+                const url = 'http://localhost:3001/uploadExcel'; // 실제 서버 URL로 변경해야 합니다.
+                // XMLHttpRequest를 사용하여 파일 업로드 요청
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', url, true);
+                xhr.onreadystatechange = async function() {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status === 200) {
+                            result1.innerHTML = input.files[0].name+" 분석완료.<br/>데이터 개수 : "+JSON.parse(xhr.responseText).length+"개, 정리를 시작합니다.";
+                            result2.innerHTML = "정리 데이터 : "+"0/"+JSON.parse(xhr.responseText).length+"개"
+                            let data = JSON.parse(xhr.responseText)
+                            let i = 0;
+                            fileId = uuidv4()
+                            data.forEach(async (e) => {
+                                e.기업명 = e.업체명
+                                let test = e.기업명
+                                const 법인 = test.includes("주식회사") || test.includes("(주)") || test.includes("(유)") || test.includes("(합)") || test.includes("( 주 )") || test.includes("( 유 )") || test.includes("( 합 )") ? true : false;
+                                e.자본금 = Number(e.자본금.replace(/,/gi,""))*1000
+                                e.이익잉여금 = Number(e.이익잉여금.replace(/,/gi,""))*1000
+                                e.장기차입금 = Number(e.장기차입금.replace(/,/gi,""))*1000
+                                e.비유동부채 = Number(e.비유동부채.replace(/,/gi,""))*1000
+                                e.매출액 = e.매출액*1000000
+                                e.영업이익 = e.영업이익*1000000
+                                e.당기순이익 = e.당기순이익*1000000
+                                e.세금 = 과세표준계산(e.당기순이익, 법인)
+                                e.자본총액 = e.자본금 + e.당기순이익
+                                e.부채비율 = (e.장기차입금 / e.자본총액 * 100).toFixed(2)
+                                e.자기자본이익률 = e.당기순이익 / e.자본총액
+                                e.이익잉여금 = test.includes("주식회사") || test.includes("(주)") || test.includes("( 주 )") ? e.이익잉여금 : 0
+                                e.사업연도 = ""
+                                e.장기차입금_매출액 = (e.장기차입금 / e.매출액).toFixed(2) * 100
+                                let response = await axios.post(`http://localhost:3001/makePdf`, {id:fileId,data:e})
+                                i++;
+                                result2.innerHTML = "정리 데이터 : "+i+"/"+JSON.parse(xhr.responseText).length+"개"
+                                if (i === JSON.parse(xhr.responseText).length) {
+                                result2.innerHTML = "정리 데이터 : "+i+"/"+JSON.parse(xhr.responseText).length+"개</br>압축 진행중.."
+                                    await axios.post(`http://localhost:3001/makeZip`, {id:fileId})
+                                    result2.innerHTML = "정리 데이터 : "+i+"/"+JSON.parse(xhr.responseText).length+"개</br>작업완료!"
+                                    startButton.disabled = false;
+                                    downButton.disabled = false;
+                                }
+                            })
+                        } else {
+                            // 업로드 실패 시 동작할 코드
+                            console.log('파일 업로드 실패');
+                        }
+                    }
+                };
+                xhr.send(formData);
+            }
+
+            async function searchCompany() {
+                const startButton = document.getElementById("search");
+                startButton.disabled = true;
+                const searchbarInput = document.querySelector('input[name="searchbar"]');
+                startButton.textContent = '검색중';
+                let response = await axios.get(`http://localhost:3001/getCompany?company=${searchbarInput.value}&ceo=&phone=`)
+                let data = response.data
+                if(response.data == false || response.data == "false") {
+                    searchbarInput.value = "검색 실패.."
+                    startButton.disabled = false;
+                    startButton.textContent = '검색';
+                } else {
+                    let is = uuidv4();
+                    let e =data;
+                    e.기업명 = e.업체명;
+                                let test = e.기업명
+                                const 법인 = test.includes("주식회사") || test.includes("(주)") || test.includes("(유)") || test.includes("(합)") || test.includes("( 주 )") || test.includes("( 유 )") || test.includes("( 합 )") ? true : false;
+                                e.자본금 = Number(e.자본금.replace(/,/gi,""))*1000
+                                e.이익잉여금 = Number(e.이익잉여금.replace(/,/gi,""))*1000
+                                e.장기차입금 = Number(e.장기차입금.replace(/,/gi,""))*1000
+                                e.비유동부채 = Number(e.비유동부채.replace(/,/gi,""))*1000
+                                e.매출액 = e.매출액*1000000
+                                e.영업이익 = e.영업이익*1000000
+                                e.당기순이익 = e.당기순이익*1000000
+                                e.세금 = 과세표준계산(e.당기순이익, 법인)
+                                e.자본총액 = e.자본금 + e.당기순이익
+                                e.부채비율 = (e.장기차입금 / e.자본총액 * 100).toFixed(2)
+                                e.자기자본이익률 = e.당기순이익 / e.자본총액
+                                e.이익잉여금 = test.includes("주식회사") || test.includes("(주)") || test.includes("( 주 )") ? e.이익잉여금 : 0
+                                e.사업연도 = ""
+                                e.장기차입금_매출액 = (e.장기차입금 / e.매출액).toFixed(2) * 100
+                startButton.textContent = '제작중';
+                                let response = await axios.post(`http://localhost:3001/makePdf`, {id:is,data:e})
+                startButton.textContent = '제작완료!';
+                downloadPdf(is,e.기업명+"_"+e.대표자)
+                    startButton.disabled = false;
+                }
+            }
+        </script>
+    </head>
+
+    <body>
+    <div class="bg-light border rounded border-light jumbotron py-5 px-4">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">DB 가공기</h4>
+                <h6 class="text-muted card-subtitle mb-2">Ver 1.0 Alpha</h6>
+                <div class="bg-light border rounded border-light jumbotron py-5 px-4" id="loading">
+                    <p id="result1"></p>
+                    <p id="result2"></p>
+                </div>
+                <input type="file" id="excelFile" accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" multiple onchange="handleFileSelect(event)"><br/>
+                <p>분석할 디비자료 파일을 선택하십시오.</p>
+                <p id="target"></p>
+                <button onclick="uploadExcel()" id="startButton" class="btn btn-success btn-lg">분석시작</button>
+                <button onclick="downloadExcel()" id="downButton" class="btn btn-success btn-lg" disabled>결과 다운로드</button>
+            </div>
+            <div class="card-body">
+                <h4 class="card-title">DB 정리기</h4>
+                <h6 class="text-muted card-subtitle mb-2">Ver 1.0 Alpha</h6>
+                
+                <div class="row">
+                    <div class="col-md-10 offset-md-1">
+                        <div class="card m-auto" style="max-width: 400px;float:left;">
+                            <div class="card-body">
+                                <form class="d-flex align-items-center"><i class="fas fa-search d-none d-sm-block h4 text-body m-0"></i><input class="form-control form-control-lg flex-shrink-1 form-control-borderless" type="search" placeholder="회사명 + 대표명" name="searchbar"><button class="btn btn-success" id="search" onclick="searchCompany()">검색</button></form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-light border rounded border-light jumbotron py-5 px-4" id="loading">
+                    <p id="result3"></p>
+                    <p id="result4"></p>
+                </div>
+                <input type="file" id="excelFile2" accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" multiple onchange="handleFileSelect(event)"><br/>
+                <p>분석할 가공된 엑셀파일을 선택하십시오.</p>
+                <p id="target"></p>
+                <button onclick="uploadExcelData()" id="startButton2" class="btn btn-success btn-lg">분석시작</button>
+                <button onclick="downloadZip()" id="downButton2" class="btn btn-success btn-lg" disabled>결과 다운로드</button>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+    </body>
+
+    </html>
+<% } %>
